@@ -1,0 +1,10 @@
+# Author: Claudio <3261958605@qq.com>
+# Created: 2017-05-02 15:39:52
+# Commentary:
+#+TITLE: 本地Python库
+
+* 用法
+
+  #+BEGIN_SRC sh :session
+  export PYTHONPATH=~/python:"$PYTHONPATH"
+  #+END_SRC
