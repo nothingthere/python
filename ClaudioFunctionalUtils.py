@@ -1,11 +1,14 @@
 #!/usr/bin/python3
 # Author: Claudio <3261958605@qq.com>
 # Created: 2017-05-07 18:36:06
-# Commentary: 转抄自Python标准库网页
+# Commentary: 转抄自Python标准库页面：
+# https://docs.python.org/3/library/itertools.html#itertools-recipes
 '''
 函数式编程工具
 '''
 
+import operator
+import random
 from collections import deque
 from itertools import (chain,
                        combinations,
@@ -18,7 +21,6 @@ from itertools import (chain,
                        starmap,
                        tee,
                        zip_longest)
-from operator import mul
 
 
 def take(n, iterable):
@@ -78,7 +80,7 @@ def ncycles(iterable, n):
 
 def dotproduct(vec1, vec2):
     '点乘'
-    return sum(map(mul, vec1, vec2))
+    return sum(map(operator.mul, vec1, vec2))
 
 
 def flatten(listOfLists):
@@ -142,7 +144,82 @@ def powerset(iterable):
     return chain.from_iterable(combinations(s, r) for r in range(len(s) + 1))
 
 
+def unique_everseen(iterable, key=None):
+    '''返回去重元素，保持原来顺序。记忆所有出现过的元素
+
+    unique_everseen('AAABBCCCDDAABB') --> A B C D
+    unique_everseen('ABCcAaD', str.lower) --> A B C D
+    '''
+    seen = set()
+    seen_add = seen.add
+    if key is None:
+        for element in filterfalse(seen.__contains__, iterable):
+            seen_add(element)
+            yield element
+    else:
+        for element in iterable:
+            k = key(element)
+            if k not in seen:
+                seen_add(k)
+                yield element
+
+
+def unique_justseen(iterable, key=None):
+    '''返回去重元素，保持原来顺序。只记忆当前出现过的元素
+
+    unique_everseen('AAABBCCCDDAABB') --> A B C D A B
+    unique_everseen('ABCcAaD', str.lower) --> A B C A D
+    '''
+    return map(next, map(operator.itemgetter(1), groupby(iterable, key)))
+
+
+def iter_except(func, exception, first=None):  # ？？？
+    try:
+        if first is not None:
+            yield first()
+        while True:
+            print('...')
+            yield func()
+    except exception:
+        print('!!!')
+        pass
+
+
+def random_product(*args, repeat=1):
+    '随机笛卡尔乘积元素。即相当于itertools.product(*args, **kwds)中的随机元素。'
+    pools = [tuple(pool) for pool in args] * repeat
+    print(list(pools))
+    return tuple(random.choice(pool)for pool in pools)
+
+
+def random_permutation(iterable, r=None):
+    pool = tuple(iterable)
+    r = len(pool) if r is None else r
+    return tuple(random.sample(pool, r))
+
+
+def random_combination(iterable, r):
+    '从itertools.combinations(iterable, r)中随机获取元素。'
+    pool = tuple(iterable)
+    n = len(pool)
+    indices = sorted(random.sample(range(n), r))
+    return tuple(pool[i] for i in indices)
+
+
+def random_combination_with_replacement(iterable, r):
+    '从itertools.combinations_with_replacement(iterable, r)中随机获取元素。'
+    pool = tuple(iterable)
+    n = len(pool)
+    indices = sorted(random.randrange(n) for i in range(r))
+    return tuple(pool[i] for i in indices)
+
+
+def mappend(fn, args):
+    "与CL同名函数用法相同。"
+    return [item for result in map(fn, args)
+            for item in result]
+
+
 if __name__ == '__main__':
-    data = powerset([1, 2, 3])
-    for x in data:
-        print(list(x))
+    print(list(unique_everseen('AAABBCCCDDAABB')))
+    print(list(unique_everseen('ABCcAaD', str.lower)))

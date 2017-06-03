@@ -1,25 +1,25 @@
 #!/usr/bin/python3
-'''
-Fibonacci
-'''
 # Author: Claudio <3261958605@qq.com>
 # Created: 2017-05-02 15:03:48
 # Commentary:
 # Code:
 
+'''
+Fibonacci
+'''
 
+import functools
+
+
+@functools.lru_cache(maxsize=None)
 def fib(n):
-    a, b = 0, 1
-    while b < n:
-        print(b, end=' ')
-        a, b = b, a + b
-    print()
+    if n <= 2:
+        return n
+    else:
+        return fib(n - 1) + fib(n - 2)
 
 
-def fib2(n):
-    result = []
-    a, b = 0, 1
-    while b < n:
-        result.append(b)
-        a, b = b, a + b
-    return result
+fn = fib
+
+for i in range(1000):
+    print(fib(i))
