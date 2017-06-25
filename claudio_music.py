@@ -63,18 +63,33 @@ def get_music_files(music_dir):
 
 def play_music(music_file, player='mplayer'):
     '播放单个音频文件。'
-    print('q)     下一曲')
-    print('Space) 暂停 ')
     subprocess.run([player, music_file],
                    stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL)
+
+
+def clear_to_lines_up(lines):
+    '''命令行中清除前面LINES行数
+    @https://stackoverflow.com/questions/36520120/overwriting-clearing-previous-console-line
+    '''
+    for _ in range(lines):
+        sys.stdout.write("\033[F")  # 光标向上一行
+        sys.stdout.write("\033[K")  # 光标清除至行末
 
 
 def play_musics(music_dir, player='mplayer'):
     '播放MUSIC_DIR文件夹中的所有音乐文件'
     music_files = get_music_files(music_dir)
+    played = 0                    # 已播放数量
     for filename in music_files:
-        print('正在播放：{}'.format(filename))
+        if played > 0:
+            clear_to_lines_up(3)
+
+        print('正在播放第{}首：{}'.format(played + 1, filename))
+        print('q)     下一曲')
+        print('Space) 暂停 ')
         play_music(filename, player=player)
+
+        played += 1
 
 
 def display_music_dirs_and_get_dir(music_dirs):
@@ -84,7 +99,7 @@ def display_music_dirs_and_get_dir(music_dirs):
     # 打印菜单
     from os import get_terminal_size
     terminal_columns = get_terminal_size().columns
-    choice_columns = 3          # 选择打印宽度
+    choice_columns = 2          # 选择打印宽度
     dir_columns = 20            # 文件夹打印宽度
 
     columns = terminal_columns // (choice_columns + dir_columns)  # 单行打印个数
