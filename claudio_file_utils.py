@@ -19,8 +19,8 @@ class ClaudioFileUtils:
         self.filename = filename
         self._filepath = Path(filename)
         if self.is_file():
-            file_magic = magic.Magic(mime=True, uncompress=True)
-            self._filetype = file_magic.from_file(self.filename)
+            with magic.Magic(flags=magic.MAGIC_MIME) as m:
+                self._filetype = m.id_filename(self.filename)
         else:
             self._filetype = None
 

@@ -80,11 +80,12 @@ def play_musics(music_dir, player='mplayer'):
     '播放MUSIC_DIR文件夹中的所有音乐文件'
     music_files = get_music_files(music_dir)
     played = 0                    # 已播放数量
+    musics = len(music_files)
     for filename in music_files:
         if played > 0:
             clear_to_lines_up(3)
 
-        print('正在播放第{}首：{}'.format(played + 1, filename))
+        print('{}/{}：{}'.format(played + 1, musics, os.path.basename(filename)))
         print('q)     下一曲')
         print('Space) 暂停 ')
         play_music(filename, player=player)

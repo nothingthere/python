@@ -35,7 +35,7 @@ def colorful(string, color='green'):
 
 def list_all():
     '列出所有颜色。'
-    for k in COLORS.keys():
+    for k in COLORS:
         print(colorful(k, k))
 
 
